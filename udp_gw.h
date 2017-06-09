@@ -13,6 +13,10 @@ public:
 private:
     QUdpSocket *udpSocket;
     QMainWindow *mainWindow;
+
+    void parseData(QByteArray *data);
+
+    void setOriginalTrack(std::string data);
 public slots:
     void readPendingData();
 };

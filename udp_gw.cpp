@@ -2,6 +2,7 @@
 #include "QNetworkDatagram"
 #include <QDebug>
 #include <iostream>
+#include <sstream>
 
 UDP_GW::UDP_GW()
 {
@@ -25,6 +26,21 @@ void UDP_GW::readPendingData()
     buffer.resize(udpSocket->pendingDatagramSize());
     udpSocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
 
-    std::cout << "data: " << buffer.data() << std::endl ;
+    parseData(&buffer);
+}
 
+void UDP_GW::parseData(QByteArray *buffer)
+{
+    std::string dataString = buffer->data();
+    std::cout << "data: " << dataString << std::endl;
+
+    std::stringstream ss;
+    ss.str(dataString);
+
+    std::string command;
+    ss >> command;
+    std::cout << command << std::endl;
+
+    if (command.compare("SET_ORIGINAL_TRACK") == 0) std::cout << "jo" << std::endl;
+    else std::cout << "ERROR, no valid command\n";
 }
