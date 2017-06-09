@@ -18,8 +18,5 @@ int main(int argc, char *argv[])
 
     w.setCentralWidget(chartView);
 
-
-
-
     return a.exec();
 }

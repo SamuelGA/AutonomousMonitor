@@ -18,14 +18,13 @@ UDP_GW::UDP_GW()
 void UDP_GW::readPendingData()
 {
     std::cout << "test" << std::endl;
-    while (udpSocket->hasPendingDatagrams()) {
-        QNetworkDatagram datagram = udpSocket->receiveDatagram();
-        QByteArray buffer;
-        QHostAddress sender;
-        quint16 senderPort;
+    QByteArray buffer;
+    QHostAddress sender;
+    quint16 senderPort;
 
-        buffer.resize(udpSocket->pendingDatagramSize());
-        udpSocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+    buffer.resize(udpSocket->pendingDatagramSize());
+    udpSocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
 
-    }
+    std::cout << "data: " << buffer.data() << std::endl ;
+
 }
