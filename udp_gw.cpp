@@ -3,8 +3,12 @@
 #include <QDebug>
 #include <iostream>
 #include <sstream>
+#include <QDebug>
+#include <iomanip>
 
-UDP_GW::UDP_GW()
+
+UDP_GW::UDP_GW(Area *area) :
+    area(area)
 {
    udpSocket = new QUdpSocket(this);
    udpSocket->bind(QHostAddress::AnyIPv4, 1234, QUdpSocket::ShareAddress);
@@ -39,8 +43,100 @@ void UDP_GW::parseData(QByteArray *buffer)
 
     std::string command;
     ss >> command;
-    std::cout << command << std::endl;
 
-    if (command.compare("SET_ORIGINAL_TRACK") == 0) std::cout << "jo" << std::endl;
-    else std::cout << "ERROR, no valid command\n";
+    if (command.compare("SET_ORIGINAL_TRACK") == 0) setOriginalTrack(dataString);
+    if (command.compare("SET_SPLINE_LINE") == 0) setSplineLine(dataString);
+
+}
+
+void UDP_GW::setSplineLine(std::string data)
+{
+    std::vector<glm::vec2> coneList;
+
+    std::stringstream ss;
+    ss.str(data);
+    std::string singleWord;
+
+    ss >> singleWord;
+
+    std::string xPos;
+    std::string yPos;
+
+    qDebug() << "splineline: ";
+    while(!ss.eof())
+    {
+        ss >> singleWord;
+        xPos = singleWord;
+        QString debugXPOS = QString::fromStdString(xPos);
+        ss >> singleWord;
+        yPos = singleWord;
+        QString debugYPOS = QString::fromStdString(yPos);
+        qDebug() << "xPos" << debugXPOS << " yPos" << debugYPOS;
+
+        std::replace(xPos.begin(), xPos.end(), '.', ',');
+        std::replace(yPos.begin(), yPos.end(), '.', ',');
+
+        glm::vec2 cone(std::stod(xPos), std::stod(yPos));
+
+        coneList.push_back(cone);
+    }
+    coneList.pop_back();
+
+
+    area->setSplineLine(coneList);
+}
+
+void UDP_GW::setOriginalTrack(std::string data)
+{
+    std::vector<glm::vec2> leftConeList;
+    std::vector<glm::vec2> rightConeList;
+
+    std::stringstream ss;
+    ss.str(data);
+    std::string singleWord;
+
+    ss >> singleWord >> singleWord;
+
+    std::string xPos;
+    std::string yPos;
+
+    std::cout << "hallo";
+    qDebug() << "leftSide: ";
+    while( (xPos.compare("left_side")))
+    {
+        ss >> singleWord;
+        xPos = singleWord;
+        if(!xPos.compare("right_side")) break;
+        QString debugXPOS = QString::fromStdString(xPos);
+        ss >> singleWord;
+        yPos = singleWord;
+        QString debugYPOS = QString::fromStdString(yPos);
+        qDebug() << "xPos" << debugXPOS << " yPos" << debugYPOS;
+
+        std::replace(xPos.begin(), xPos.end(), '.', ',');
+        std::replace(yPos.begin(), yPos.end(), '.', ',');
+
+        glm::vec2 cone(std::stod(xPos), std::stod(yPos));
+        leftConeList.push_back(cone);
+    }
+
+    qDebug() << "rightSide: ";
+    do
+    {
+        ss >> singleWord;
+        xPos = singleWord;
+
+        QString debugXPOS = QString::fromStdString(xPos);
+        ss >> singleWord;
+        yPos = singleWord;
+        QString debugYPOS = QString::fromStdString(yPos);
+        qDebug() << "xPos" << debugXPOS << " yPos" << debugYPOS;
+        std::replace(xPos.begin(), xPos.end(), '.', ',');
+        std::replace(yPos.begin(), yPos.end(), '.', ',');
+        glm::vec2 cone(std::stod(xPos), std::stod(yPos));
+        rightConeList.push_back(cone);
+    } while (!ss.eof());
+    rightConeList.pop_back();
+    area->updateTrack(leftConeList, rightConeList);
+
 }

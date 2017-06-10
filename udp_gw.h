@@ -4,19 +4,21 @@
 #include <QUdpSocket>
 #include <QObject>
 #include <QMainWindow>
+#include <area.h>
 
 class UDP_GW : public QObject
 {
     Q_OBJECT
 public:
-    UDP_GW();
+    UDP_GW(Area *area);
 private:
     QUdpSocket *udpSocket;
-    QMainWindow *mainWindow;
+    Area *area;
 
     void parseData(QByteArray *data);
 
     void setOriginalTrack(std::string data);
+    void setSplineLine(std::string data);
 public slots:
     void readPendingData();
 };

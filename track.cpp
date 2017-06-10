@@ -1,4 +1,6 @@
 #include "track.h"
+#include <iostream>
+#include <QDebug>
 
 Track::Track(std::vector<glm::vec2> leftCones, std::vector<glm::vec2> rightCones)
 {
@@ -23,13 +25,17 @@ Track::Track(std::vector<glm::vec2> leftCones, std::vector<glm::vec2> rightCones
 
 void Track::updateTrack(std::vector<glm::vec2> seriesLeftNew, std::vector<glm::vec2> seriesRightNew)
 {
+    qDebug() << "angekommen";
+
     this->seriesLeft->clear();
     this->seriesRight->clear();
+
 
     for (glm::vec2 cone : seriesLeftNew)
         *(this->seriesLeft) << QPointF(cone.x, cone.y);
     for (glm::vec2 cone : seriesRightNew)
         *(this->seriesRight) << QPointF(cone.x, cone.y);
+
 
 //    this->seriesLeft->clear();
 //    this->seriesRight->clear();

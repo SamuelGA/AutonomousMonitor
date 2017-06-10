@@ -1,12 +1,18 @@
 #include "area.h"
 #include <vector>
 #include <glm/glm.hpp>
+#include "iostream"
 
 
 Area::Area()
 {
 
-    this->addTrack();
+    std::vector<glm::vec2> conesOne;
+    std::vector<glm::vec2> conesTwo;
+    conesOne.push_back(glm::vec2(1, 1));
+    conesTwo.push_back(glm::vec2(-1, -1));
+    this->updateTrack(conesOne, conesTwo);
+
     this->setTitle("Area");
     this->createDefaultAxes();
 
@@ -15,31 +21,57 @@ Area::Area()
 
 }
 
+void Area::clear()
+{
+    this->removeAllSeries();
+}
+
 
 void Area::addTrack()
 {
-    std::vector<glm::vec2> rightCones;
-    std::vector<glm::vec2> leftCones;
+//    std::vector<glm::vec2> rightCones;
+//    std::vector<glm::vec2> leftCones;
 
-    rightCones.push_back(glm::vec2(0, 4));
-    rightCones.push_back(glm::vec2(4, 4));
-    leftCones.push_back(glm::vec2(0,-4));
-    leftCones.push_back(glm::vec2(4,-4));
+//    track = new Track(leftCones, rightCones);
+//    this->addSeries(track->trackSeries );
 
-    Track *track = new Track(leftCones, rightCones);
 
-    this->addSeries(track->trackSeries );
+}
 
-    rightCones.clear();
-    leftCones.clear();
-    rightCones.push_back(glm::vec2(0, 5));
-    rightCones.push_back(glm::vec2(4, 6));
-    rightCones.push_back(glm::vec2(8,3));
-    leftCones.push_back(glm::vec2(0,-3));
-    leftCones.push_back(glm::vec2(4,-2));
-    leftCones.push_back(glm::vec2(8,-5));
+void Area::setSplineLine(std::vector<glm::vec2> splineLine)
+{
+    QLineSeries *series0 = new QLineSeries();
+    series0->setName("scatter1");
 
-    track->updateTrack(rightCones, leftCones);
+
+    for (glm::vec2 cone : splineLine)
+    {
+        *series0 << QPointF(cone.x, cone.y);
+    }
+
+    this->addSeries(series0);
+    this->createDefaultAxes();
+    this->axisY()->setRange(-15, 15);
+    this->axisX()->setRange(-1, 40);
+}
+
+void Area::updateTrack(std::vector<glm::vec2> leftCones, std::vector<glm::vec2> rightCones)
+{
+    QLineSeries *seriesOne = new QLineSeries();
+    QLineSeries *seriesTwo = new QLineSeries();
+
+    for (glm::vec2 cone : leftCones)
+    {
+        *seriesOne << QPointF(cone.x, cone.y);
+    }
+    for (glm::vec2 cone : rightCones)
+    {
+        *seriesTwo << QPointF(cone.x, cone.y);
+    }
+    QAreaSeries *trackSeries = new QAreaSeries(seriesOne, seriesTwo);
+    QColor *color = new QColor(190, 190, 190);
+    trackSeries->setColor(*color);
+    this->addSeries(trackSeries);
 }
 
 

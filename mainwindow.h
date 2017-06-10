@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <area.h>
 
 namespace Ui {
 class MainWindow;
@@ -13,9 +14,13 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    void setArea(Area *area);
     ~MainWindow();
 
+private slots:
+    void clearButtonPressed();
 private:
+    Area *area;
     Ui::MainWindow *ui;
 };
 

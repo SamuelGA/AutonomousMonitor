@@ -11,10 +11,13 @@ class Area : public QChart
 public: 
     Area();
     void addTrack();
-    void updateTrack(QAreaSeries track);
+    void updateTrack(std::vector<glm::vec2> leftCones, std::vector<glm::vec2> rightCones);
+    void setSplineLine(std::vector<glm::vec2> splineLine);
+    void clear();
 
 private:
     Track *track;
+
 };
 
 #endif // AREA_H
